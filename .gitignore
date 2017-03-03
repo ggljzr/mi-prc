@@ -1,6 +1,8 @@
 *.swp
 
 *.out
+*.exe
+
 *.i
 *.ii
 *.gpu
