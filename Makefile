@@ -1,7 +1,7 @@
 SHELL      = /bin/sh
 CC         = g++
 
-CFLAGS       = -pedantic -Wall -ggdb3
+CFLAGS       = -pedantic -Wall -ggdb3 -std=gnu++11
 DEBUGFLAGS   = -O0 -D _DEBUG
 RELEASEFLAGS = -O2 -D NDEBUG
 
