@@ -15,4 +15,6 @@ public:
     void print_poly();
 
     static CPoly * triv_mult(CPoly * a, CPoly * b);
+    static CPoly * karatsuba(CPoly * a, CPoly * b);
+    static bool compare(CPoly * a, CPoly * b);
 };

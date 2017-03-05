@@ -23,6 +23,25 @@ CPoly::CPoly(int deg)
 		m_coefs[i] = 0;
 }
 
+CPoly::~CPoly()
+{
+	delete [] m_coefs;
+}
+
+bool CPoly::compare(CPoly * a, CPoly * b)
+{
+	if(a->m_deg != b->m_deg)
+		return false;
+
+	for(int i = 0; i < a->m_len; i++)
+	{
+		if(a->m_coefs[i] != b->m_coefs[i])
+			return false;
+	}
+
+	return true;
+}
+
 CPoly * CPoly::triv_mult(CPoly * a, CPoly * b)
 {
 	
@@ -39,11 +58,70 @@ CPoly * CPoly::triv_mult(CPoly * a, CPoly * b)
     return res;
 }
 
+/*
+Karatsuba's iterative algorithm. 
+Implementation based on:
+https://eprint.iacr.org/2006/224.pdf
+*/
+CPoly * CPoly::karatsuba(CPoly * a, CPoly * b)
+{
+	CPoly * res = new CPoly(a->m_deg + b->m_deg);
+
+	int n = a->m_len;
+
+	double * D = new double[n];
+	for(int i = 0; i < n; i++)
+		D[i] = a->m_coefs[i] * b->m_coefs[i];
+
+	double * S = new double[2*n - 1];
+	double * T = new double[2*n - 1];
+
+	for(int i = 1; i < 2*n - 2; i++)
+	{
+		for(int s = 0; s < i; s++)
+		{
+			int t = i - s;
+			if(s >= t) break;
+
+			if(t < a->m_len){
+				double as = a->m_coefs[s];
+				double bs = b->m_coefs[s];
+
+				double at = a->m_coefs[t];
+				double bt = b->m_coefs[t];
+
+				S[i] += (as + at) * (bs + bt);
+				T[i] += D[s] + D[t];
+			}
+		}
+	}
+
+	res->m_coefs[0] = D[0];
+	res->m_coefs[2*n - 2] = D[n - 1];
+
+	for(int i = 1; i < 2*n - 2; i++)
+	{
+		if(i % 2 == 1)
+		{
+			res->m_coefs[i] = S[i] - T[i];
+		}
+		else
+		{
+			res->m_coefs[i] = S[i] - T[i] + D[i / 2];
+		}
+	}
+
+	delete [] D;
+	delete [] S;
+	delete [] T;
+	return res;
+}
+
 void CPoly::print_poly()
 {
-	for(int i = 0; i < m_deg; i++)
-        printf("%.02f x^%d ", m_coefs[i], m_deg - i);
-    printf("%f x^0 \n", m_coefs[m_deg]);
+	for(int i = m_deg; i > 0; i--)
+        printf("%.02f x^%d ", m_coefs[i], i);
+    printf("%f x^0 \n", m_coefs[0]);
 }
 
 #endif
