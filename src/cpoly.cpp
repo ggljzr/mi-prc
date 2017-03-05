@@ -2,8 +2,23 @@
 #define CPOLY_H_
 
 #include <cstdio>
+#include <cstdlib>
+#include <math.h>
 
 #include "cpoly.hpp"
+
+#define EPSILON 0.001
+
+double frand(double min, double max)
+{
+    double f = (double)rand() / RAND_MAX;
+    return min + f * (max - min);
+}
+
+bool compare_double(double a, double b)
+{
+    return fabs(a - b) < EPSILON;
+}
 
 CPoly::CPoly(double * coefs, int deg)
 {
@@ -35,7 +50,7 @@ bool CPoly::compare(CPoly * a, CPoly * b)
 
 	for(int i = 0; i < a->m_len; i++)
 	{
-		if(a->m_coefs[i] != b->m_coefs[i])
+		if(!compare_double(a->m_coefs[i], b->m_coefs[i]))
 			return false;
 	}
 
@@ -46,14 +61,18 @@ CPoly * CPoly::triv_mult(CPoly * a, CPoly * b)
 {
 	
     CPoly * res = new CPoly(a->m_deg + b->m_deg);
+    long long counter = 0;
 
     for(int i = 0; i <= a->m_deg; i++)
     {
         for(int j = 0; j <= b->m_deg; j++)
         {
             res->m_coefs[i + j] += a->m_coefs[i] * b->m_coefs[j];
+            counter++;
         }
     }
+
+    printf("triv flops = %lld\n", counter);
 
     return res;
 }
@@ -76,6 +95,8 @@ CPoly * CPoly::karatsuba(CPoly * a, CPoly * b)
 	double * S = new double[2*n - 1];
 	double * T = new double[2*n - 1];
 
+	long long counter = 0;
+
 	for(int i = 1; i < 2*n - 2; i++)
 	{
 		for(int s = 0; s < i; s++)
@@ -92,6 +113,7 @@ CPoly * CPoly::karatsuba(CPoly * a, CPoly * b)
 
 				S[i] += (as + at) * (bs + bt);
 				T[i] += D[s] + D[t];
+				counter++;
 			}
 		}
 	}
@@ -111,10 +133,18 @@ CPoly * CPoly::karatsuba(CPoly * a, CPoly * b)
 		}
 	}
 
+	printf("karatsuba flops = %lld\n", counter);
+
 	delete [] D;
 	delete [] S;
 	delete [] T;
 	return res;
+}
+
+void CPoly::randomize()
+{
+	for(int i = 0; i < m_len; i++)
+		m_coefs[i] = frand(-100,100);
 }
 
 void CPoly::print_poly()

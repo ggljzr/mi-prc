@@ -13,6 +13,7 @@ public:
     ~CPoly();
 
     void print_poly();
+    void randomize();
 
     static CPoly * triv_mult(CPoly * a, CPoly * b);
     static CPoly * karatsuba(CPoly * a, CPoly * b);
