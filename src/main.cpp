@@ -10,28 +10,19 @@ int main(int argc, char * argv[])
 
     srand(1);
 
-    double a[7] = {32, 8, 7, 8, 12, 5, 3};
-    double b[7] = {12, 0, 8, 4, 25, 8, 7};
+    CPoly * pa = new CPoly(10000);
+    CPoly * pb = new CPoly(10000);
 
-    CPoly * pa = new CPoly(a, 6);
-    CPoly * pb = new CPoly(b, 6);
-    CPoly * pc = new CPoly(10000);
+    pa->randomize();
+    pb->randomize();
 
-    pc->randomize();
-    //pc->print_poly();
-
-    CPoly * res_triv = CPoly::triv_mult(pc, pc);
-    printf("TRIV:\n");
-    //res_triv->print_poly();
-
-    CPoly * res = CPoly::karatsuba(pc, pc);
-    printf("KARATSUBA:\n");
-    //res->print_poly();
+    CPoly * res_triv = CPoly::triv_mult(pa, pb);
+    CPoly * res = CPoly::karatsuba(pa, pb);
 
     if(CPoly::compare(res, res_triv))
-        printf("OK");
+        printf("OK\n");
     else
-        printf("Error");
+        printf("Error\n");
 
     delete res;
     delete res_triv;
