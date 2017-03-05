@@ -3,6 +3,7 @@
 *.out
 *.exe
 
+*.o
 *.i
 *.ii
 *.gpu
