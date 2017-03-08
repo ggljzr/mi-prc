@@ -45,6 +45,9 @@ CPoly::~CPoly()
 
 bool CPoly::compare(CPoly * a, CPoly * b)
 {
+    if(a == NULL || b == NULL)
+        return false;
+
     if(a->m_deg != b->m_deg)
         return false;
 
@@ -129,7 +132,7 @@ CPoly * CPoly::karatsuba(CPoly * a, CPoly * b)
 
     for(int i = 1; i < 2*n - 2; i++)
     {
-        if(i % 2 == 1)
+        if((i & 0x01)  == 1)
         {
             res->m_coefs[i] = S[i] - T[i];
         }

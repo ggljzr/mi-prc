@@ -10,7 +10,7 @@ using namespace std;
 int main(int argc, char * argv[])
 {
 
-    srand(1);
+    srand(time(NULL));
 
     int pol_deg = 10000;
 
@@ -57,6 +57,8 @@ int main(int argc, char * argv[])
 
     delete res;
     delete res_triv;
+    delete pa;
+    delete pb;
 
     return 0;
 }
