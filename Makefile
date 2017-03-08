@@ -1,9 +1,9 @@
 SHELL      = /bin/sh
 CC         = g++
 
-CFLAGS       = -pedantic -Wall -ggdb3 -std=gnu++11
+CFLAGS       = -pedantic -Wall -ggdb3 -std=gnu++11 -ffast-math
 DEBUGFLAGS   = -O0 -D _DEBUG
-RELEASEFLAGS = -O2 -D NDEBUG
+RELEASEFLAGS = -O3 -D NDEBUG
 
 TARGET = mult
 SOURCES = $(shell echo src/*.cpp)
@@ -21,4 +21,3 @@ release: $(SOURCES) $(HEADERS)
 clean:
 	rm -f $(OBJECTS)
 	rm -f $(TARGET)
-	rm -f gmon.put
