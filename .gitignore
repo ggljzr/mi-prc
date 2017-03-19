@@ -4,6 +4,8 @@ mult
 
 *.out
 *.exe
+*.exp
+*.lib
 
 *.o
 *.i
