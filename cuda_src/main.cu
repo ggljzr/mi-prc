@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <time.h>
+#include <math.h>
 
 #include "cpoly.h"
 
@@ -9,14 +11,25 @@ __global__ void kernel_triv_mult(float * A, float * B, float * C, int n, int m)
     if(i > n || j > m)
     	return;
 
-    C[i+j] = 6;
+    float val = A[i] * B[j];
+    atomicAdd(&(C[i + j]), (float) val);
 
 }
 
-void para_triv_mult(CPoly * A, CPoly * B, CPoly * C)
+float para_triv_mult(CPoly * A, CPoly * B, CPoly * C)
 {
-	dim3 dim_block(1, 1);
-	dim3 dim_grid(A->m_len, B->m_len);
+	int grid_x = (int)ceil((float)A->m_len / 16.0);
+	int grid_y = (int)ceil((float)B->m_len / 32.0);
+
+	dim3 dim_block(16, 32);
+	dim3 dim_grid(grid_x, grid_y);
+
+	cudaEvent_t start;
+	cudaEvent_t stop;
+	float elapsed_time = 0;
+
+	cudaEventCreate(&start);
+	cudaEventCreate(&stop);
 
 	float * dev_a;
 	float * dev_b;
@@ -33,11 +46,17 @@ void para_triv_mult(CPoly * A, CPoly * B, CPoly * C)
 	cudaMemcpy(dev_c, (float *)C->m_coefs, C->m_len * sizeof(float),
 		cudaMemcpyHostToDevice);
 
+	cudaEventRecord(start, 0);
 	kernel_triv_mult<<<dim_grid, dim_block>>>(dev_a, dev_b, dev_c, A->m_len, B->m_len);
 	cudaThreadSynchronize();
+	cudaEventRecord(stop, 0);
+
+	cudaEventSynchronize(stop);
+	cudaEventElapsedTime(&elapsed_time, start, stop);
 
 	cudaMemcpy(C->m_coefs, dev_c, C->m_len * sizeof(float), cudaMemcpyDeviceToHost);
 
+	return elapsed_time;
 }
 
 int main(int argc, char * argv[])
@@ -53,19 +72,40 @@ int main(int argc, char * argv[])
 		printf("Device name: %s\n", prop.name);
 		printf("CC: %d.%d\n", prop.major, prop.minor);
 	}
+	printf("\n");
 
-	CPoly A(10);
+	int n = 10;
+	if(argc > 1)
+		n = atoi(argv[1]);
+
+	CPoly A(n);
 	A.randomize();
-	CPoly B(10);
+	CPoly B(n);
 	B.randomize();
 
-	CPoly res_cuda(20);
-	CPoly * res = CPoly::triv_mult(&A, &B);
+	clock_t start_triv_t = 0;
+    clock_t end_triv_t = 0;
+    double total_triv_t = 0;
 
-	para_triv_mult(&A, &B, &res_cuda);
-	res_cuda.print_poly();
+	CPoly res_cuda(2 * n);
+
+	start_triv_t = clock();
+	CPoly * res = CPoly::triv_mult(&A, &B);
+	end_triv_t = clock();
+
+	total_triv_t = (double)(end_triv_t - start_triv_t) / (CLOCKS_PER_SEC);
+
+	float total_time_cuda = para_triv_mult(&A, &B, &res_cuda);
+
+	if(CPoly::compare(res, &res_cuda))
+        printf("OK\n");
+    else
+        printf("Error\n");
+    printf("\n");
 
 	//res->print_poly();
+	printf("Total time seq: %f ms\n", total_triv_t * 1000);
+	printf("Total time cuda: %f ms\n", total_time_cuda);
 
 	return 0;
 }

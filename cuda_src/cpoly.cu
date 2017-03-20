@@ -7,7 +7,7 @@
 
 #include "cpoly.h"
 
-#define EPSILON 0.001
+#define EPSILON 0.1
 
 float frand(float min, float max)
 {
@@ -54,7 +54,11 @@ bool CPoly::compare(CPoly * a, CPoly * b)
     for(int i = 0; i < a->m_len; i++)
     {
         if(!compare_float(a->m_coefs[i], b->m_coefs[i]))
+        {
+            printf("A: %f B:%f\n", a->m_coefs[i], b->m_coefs[i]);
             return false;
+        }    
+
     }
 
     return true;
