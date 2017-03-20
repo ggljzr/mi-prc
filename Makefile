@@ -1,6 +1,6 @@
 SHELL      = /bin/sh
 CC         = g++
-CUDA_CC    = nvcc
+CUDA_CC    = nvcc -O3
 
 CFLAGS       = -pedantic -Wall -ggdb3 -std=gnu++11 -ffast-math
 DEBUGFLAGS   = -O0 -D _DEBUG
