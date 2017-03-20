@@ -7,11 +7,13 @@
 
 #include "cpoly.h"
 
-#define EPSILON 0.1
+#define EPSILON 0.01
+
+#define MUH_MAX 2147483647
 
 float frand(float min, float max)
 {
-    float f = (float)rand() / RAND_MAX;
+    float f = (float)rand() / MUH_MAX;
     return min + f * (max - min);
 }
 
@@ -152,10 +154,10 @@ CPoly * CPoly::karatsuba(CPoly * a, CPoly * b)
     return res;
 }
 
-void CPoly::randomize()
+void CPoly::randomize(float min, float max)
 {
     for(int i = 0; i < m_len; i++)
-        m_coefs[i] = frand(-100,100);
+        m_coefs[i] = frand(min, max);
 }
 
 void CPoly::print_poly()

@@ -63,6 +63,7 @@ int main(int argc, char * argv[])
 {
 	int n_devices = 0;
 	cudaGetDeviceCount(&n_devices);
+	srand(time(NULL));
 
 	for(int i = 0; i < n_devices; i++)
 	{
