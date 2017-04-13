@@ -108,5 +108,8 @@ int main(int argc, char * argv[])
 	printf("Total time seq: %f ms\n", total_triv_t * 1000);
 	printf("Total time cuda: %f ms\n", total_time_cuda);
 
+	if(res->m_len < 20){
+		res->print_poly();
+	}
 	return 0;
 }

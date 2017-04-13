@@ -13,7 +13,7 @@
 
 float frand(float min, float max)
 {
-    float f = (float)rand() / MUH_MAX;
+    float f = (float)rand() / RAND_MAX;
     return min + f * (max - min);
 }
 
@@ -71,18 +71,13 @@ CPoly * CPoly::triv_mult(CPoly * a, CPoly * b)
 
     CPoly * res = new CPoly(a->m_deg + b->m_deg);
 
-    long long counter = 0;
-
     for(int i = 0; i <= a->m_deg; i++)
     {
         for(int j = 0; j <= b->m_deg; j++)
         {
-            counter++;
             res->m_coefs[i + j] += a->m_coefs[i] * b->m_coefs[j];
         }
     }
-
-    printf("triv counter %lld\n", counter);
 
     return res;
 }
@@ -105,15 +100,11 @@ CPoly * CPoly::karatsuba(CPoly * a, CPoly * b)
     float * S = new float[2*n - 1];
     float * T = new float[2*n - 1];
 
-    long long counter = 0;
-    long long counter_flops = 0;
-
     for(int i = 1; i < 2*n - 2; i++)
     {
         for(int s = 0; s < i; s++)
         {
             int t = i - s;
-            counter++;
             if(s >= t) break;
             if(t >= n) continue;
 
@@ -124,14 +115,11 @@ CPoly * CPoly::karatsuba(CPoly * a, CPoly * b)
             float bt = b->m_coefs[t];
 
             T[i] += D[s] + D[t];
-            counter_flops++;
 
             S[i] += (as + at) * (bs + bt);
             
         }
     }
-
-    printf("kara counter %lld\n             (%lld)\n", counter, counter_flops);
 
     res->m_coefs[0] = D[0];
     res->m_coefs[2*n - 2] = D[n - 1];
@@ -156,8 +144,8 @@ CPoly * CPoly::karatsuba(CPoly * a, CPoly * b)
 
 void CPoly::randomize(float min, float max)
 {
-    for(int i = 0; i < m_len; i++)
-        m_coefs[i] = frand(min, max);
+    for(int i = 0; i < m_len; i++){
+        m_coefs[i] = frand(min, max);}
 }
 
 void CPoly::print_poly()
