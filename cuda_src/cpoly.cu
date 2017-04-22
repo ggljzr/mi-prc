@@ -66,8 +66,7 @@ Karatsuba's iterative algorithm.
 Implementation based on:
 https://eprint.iacr.org/2006/224.pdf
 */
-CPoly * CPoly::karatsuba(CPoly * a, CPoly * b)
-{
+CPoly* CPoly::karatsuba(CPoly* a, CPoly* b) {
   CPoly* res = new CPoly(a->m_deg + b->m_deg);
 
   int n = a->m_len;
@@ -94,27 +93,23 @@ CPoly * CPoly::karatsuba(CPoly * a, CPoly * b)
 
       S[i] += (as + at) * (bs + bt);
     }
+  }
+
+  res->m_coefs[0] = D[0];
+  res->m_coefs[2 * n - 2] = D[n - 1];
+
+  for (int i = 1; i < 2 * n - 2; i++) {
+    if ((i & 0x01) == 1) {
+      res->m_coefs[i] = S[i] - T[i];
+    } else {
+      res->m_coefs[i] = S[i] - T[i] + D[i / 2];
     }
+  }
 
-    res->m_coefs[0] = D[0];
-    res->m_coefs[2*n - 2] = D[n - 1];
-
-    for(int i = 1; i < 2*n - 2; i++)
-    {
-        if((i & 0x01)  == 1)
-        {
-            res->m_coefs[i] = S[i] - T[i];
-        }
-        else
-        {
-            res->m_coefs[i] = S[i] - T[i] + D[i / 2];
-        }
-    }
-
-    delete [] D;
-    delete [] S;
-    delete [] T;
-    return res;
+  delete[] D;
+  delete[] S;
+  delete[] T;
+  return res;
 }
 
 void CPoly::randomize(float min, float max) {
