@@ -8,11 +8,11 @@ __global__ void kernel_triv_mult(float * A, float * B, float * C, int n, int m)
 {
 	int i = blockDim.x * blockIdx.x + threadIdx.x;
 	int j = blockDim.y * blockIdx.y + threadIdx.y;
-    if(i > n || j > m)
-    	return;
+  
+  if (i >= n || j >= m) return;
 
-    float val = A[i] * B[j];
-    atomicAdd(&(C[i + j]), (float) val);
+  float val = A[i] * B[j];
+  atomicAdd(&(C[i + j]), (float)val);
 
 }
 
