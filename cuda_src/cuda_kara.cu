@@ -62,6 +62,13 @@ float para_kara_mult(CPoly *A, CPoly *B, CPoly *C) {
 	dim3 dim_block(512);
 	dim3 dim_grid(grid_x);
 
+	cudaEvent_t start;
+	cudaEvent_t stop;
+	float elapsed_time = 0;
+
+	cudaEventCreate(&start);
+	cudaEventCreate(&stop);
+
 	float *D = new float[n];
 
 	float *dev_A;
@@ -92,6 +99,7 @@ float para_kara_mult(CPoly *A, CPoly *B, CPoly *C) {
 	cudaMemcpy(dev_D, (float *)D, n * sizeof(float),
 		cudaMemcpyHostToDevice);
 
+	cudaEventRecord(start, 0);
 	kernel_kara_st<<<dim_grid, dim_block>>>(dev_A, dev_B, dev_D, n, dev_S, dev_T);
 	cudaThreadSynchronize();
 
@@ -100,6 +108,10 @@ float para_kara_mult(CPoly *A, CPoly *B, CPoly *C) {
 
 	kernel_kara_res<<<dim_grid, dim_block>>>(dev_S, dev_T, dev_D, n, dev_C);
 	cudaThreadSynchronize();
+	cudaEventRecord(stop, 0);
+
+	cudaEventSynchronize(stop);
+	cudaEventElapsedTime(&elapsed_time, start, stop);
 
 	cudaMemcpy(C->m_coefs, dev_C, C->m_len * sizeof(float), cudaMemcpyDeviceToHost);
 
@@ -108,7 +120,7 @@ float para_kara_mult(CPoly *A, CPoly *B, CPoly *C) {
 
   delete D;
 
-  return 0;
+  return elapsed_time;
 }
 
 #endif
