@@ -21,7 +21,7 @@ __global__ void kernel_kara_st(float *A, float *B, float *D, int n, float *S,
                                float *T) {
   int i = blockDim.x * blockIdx.x + threadIdx.x;
 
-  if (i >= 2 * n - 2 || i == 1)
+  if (i >= 2 * n - 2 || i == 0)
     return;
 
   for (int s = 0; s < i; s++) {
@@ -37,14 +37,14 @@ __global__ void kernel_kara_st(float *A, float *B, float *D, int n, float *S,
     float at = A[t];
     float bt = B[t];
 
-    atomicAdd(&(S[i]), (float)(D[s] + D[t]));
-    atomicAdd(&(T[i]), (float)((as + at) * (bs + bt)));
+    atomicAdd(&(T[i]), (float)(D[s] + D[t]));
+    atomicAdd(&(S[i]), (float)((as + at) * (bs + bt)));
   }
 }
 
 __global__ void kernel_kara_res(float *S, float *T, float *D, int n, float *res) {
   int i = blockDim.x * blockIdx.x + threadIdx.x;
-  if (i >= 2 * n - 2 || i == 1)
+  if (i >= 2 * n - 2 || i == 0)
     return;
 
   if ((i & 0x01) == 1) {
