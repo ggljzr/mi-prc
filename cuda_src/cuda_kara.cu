@@ -24,6 +24,9 @@ __global__ void kernel_kara_st(float *A, float *B, float *D, int n, float *S,
   if (i >= 2 * n - 2 || i == 0)
     return;
 
+  float S_accu = 0;
+  float T_accu = 0;
+
   for (int s = 0; s < i; s++) {
     int t = i - s;
     if (s >= t)
@@ -37,9 +40,15 @@ __global__ void kernel_kara_st(float *A, float *B, float *D, int n, float *S,
     float at = A[t];
     float bt = B[t];
 
-    atomicAdd(&(T[i]), (float)(D[s] + D[t]));
-    atomicAdd(&(S[i]), (float)((as + at) * (bs + bt)));
-  }
+    //atomicAdd(&(T[i]), (float)(D[s] + D[t]));
+    //atomicAdd(&(S[i]), (float)((as + at) * (bs + bt)));
+
+    T_accu += D[s] + D[t];
+    S_accu += (as + at) * (bs + bt);
+   }
+
+   atomicAdd(&(T[i]), (float)(T_accu));
+   atomicAdd(&(S[i]), (float)(S_accu));
 }
 
 __global__ void kernel_kara_res(float *S, float *T, float *D, int n, float *res) {
@@ -82,8 +91,8 @@ float para_kara_mult(CPoly *A, CPoly *B, CPoly *C) {
 	cudaMalloc((void**)&dev_A, A->m_len * sizeof(float));
 	cudaMalloc((void**)&dev_B, B->m_len * sizeof(float));
 
-	cudaMalloc((void**)&dev_S, (2 * n - 1) * sizeof(float));
-	cudaMalloc((void**)&dev_T, (2 * n - 1) * sizeof(float));
+	cudaMalloc((void**)&dev_S, (2 * n - 2) * sizeof(float));
+	cudaMalloc((void**)&dev_T, (2 * n - 2) * sizeof(float));
 	cudaMalloc((void**)&dev_D, n * sizeof(float));
 
 	for(int i = 0; i < n; i++)
@@ -94,8 +103,8 @@ float para_kara_mult(CPoly *A, CPoly *B, CPoly *C) {
 	cudaMemcpy(dev_B, (float *)B->m_coefs, B->m_len * sizeof(float),
 		cudaMemcpyHostToDevice);
 
-	cudaMemset(dev_S, 0, (2 * n - 1) * sizeof(float));
-	cudaMemset(dev_T, 0, (2 * n - 1) * sizeof(float));
+	cudaMemset(dev_S, 0, (2 * n - 2) * sizeof(float));
+	cudaMemset(dev_T, 0, (2 * n - 2) * sizeof(float));
 	cudaMemcpy(dev_D, (float *)D, n * sizeof(float),
 		cudaMemcpyHostToDevice);
 
