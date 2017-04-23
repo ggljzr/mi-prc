@@ -34,7 +34,8 @@ int main(int argc, char* argv[]) {
   CPoly res_cuda(2 * n);
 
   start_triv_t = clock();
-  CPoly* res = CPoly::triv_mult(&A, &B);
+  //CPoly* res = CPoly::triv_mult(&A, &B);
+  CPoly* res = CPoly::karatsuba(&A, &B);
   end_triv_t = clock();
 
   total_triv_t = (double)(end_triv_t - start_triv_t) / (CLOCKS_PER_SEC);

@@ -77,6 +77,12 @@ CPoly* CPoly::karatsuba(CPoly* a, CPoly* b) {
   float* S = new float[2 * n - 1];
   float* T = new float[2 * n - 1];
 
+  for(int i = 0; i < 2 * n - 1; i++)
+  {
+    S[i] = 0;
+    T[i] = 0;
+  }
+
   for (int i = 1; i < 2 * n - 2; i++) {
     for (int s = 0; s < i; s++) {
       int t = i - s;
