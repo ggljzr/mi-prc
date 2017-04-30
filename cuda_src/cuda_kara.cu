@@ -66,7 +66,7 @@ __global__ void kernel_kara_res(float *S, float *T, float *D, int n, float *res)
 float para_kara_mult(CPoly *A, CPoly *B, CPoly *C) {
   
 	int n = A->m_len;
-	int grid_x = (int)ceil((float) (2 * n - 2) / 16.0);
+	int grid_x = (int)ceil((float) (2 * n - 2) / 512.0);
 
 	dim3 dim_block(512);
 	dim3 dim_grid(grid_x);
