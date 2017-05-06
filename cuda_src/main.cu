@@ -17,7 +17,6 @@ int main(int argc, char* argv[]) {
     fprintf(stderr, "Device name: %s\n", prop.name);
     fprintf(stderr, "CC: %d.%d\n", prop.major, prop.minor);
   }
-  printf("\n");
 
   int n = 10;
   if (argc > 1) n = atoi(argv[1]);
@@ -48,7 +47,6 @@ int main(int argc, char* argv[]) {
     fprintf(stderr, "OK\n");
   else
     fprintf(stderr, "Error\n");
-  printf("\n");
 
   if (res->m_len < 20) {
     res->print_poly();
