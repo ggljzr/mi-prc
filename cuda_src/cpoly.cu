@@ -41,7 +41,7 @@ bool CPoly::compare(CPoly* a, CPoly* b) {
 
   for (int i = 0; i < a->m_len; i++) {
     if (!compare_float(a->m_coefs[i], b->m_coefs[i])) {
-      printf("A: %f B:%f (x^%d)\n", a->m_coefs[i], b->m_coefs[i], i);
+      fprintf(stderr, "A: %f B:%f (x^%d)\n", a->m_coefs[i], b->m_coefs[i], i);
       return false;
     }
   }

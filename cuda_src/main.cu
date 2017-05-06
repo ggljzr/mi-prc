@@ -13,9 +13,9 @@ int main(int argc, char* argv[]) {
   for (int i = 0; i < n_devices; i++) {
     cudaDeviceProp prop;
     cudaGetDeviceProperties(&prop, i);
-    printf("Device number: %d\n", i);
-    printf("Device name: %s\n", prop.name);
-    printf("CC: %d.%d\n", prop.major, prop.minor);
+    fprintf(stderr, "Device number: %d\n", i);
+    fprintf(stderr, "Device name: %s\n", prop.name);
+    fprintf(stderr, "CC: %d.%d\n", prop.major, prop.minor);
   }
   printf("\n");
 
@@ -44,15 +44,10 @@ int main(int argc, char* argv[]) {
   float total_time_cuda_kara = para_kara_mult(&A, &B, &res_cuda);
 
   if (CPoly::compare(res, &res_cuda))
-    printf("OK\n");
+    fprintf(stderr, "OK\n");
   else
-    printf("Error\n");
+    fprintf(stderr, "Error\n");
   printf("\n");
-
-  // res->print_poly();
-  printf("Total time seq triv: %f ms\n", total_triv_t * 1000);
-  printf("Total time cuda triv: %f ms\n", total_time_cuda_triv);
-  printf("Total time cuda kara: %f ms\n", total_time_cuda_kara);
 
   if (res->m_len < 20) {
     res->print_poly();
