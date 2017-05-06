@@ -40,8 +40,8 @@ int main(int argc, char* argv[]) {
 
   total_triv_t = (double)(end_triv_t - start_triv_t) / (CLOCKS_PER_SEC);
 
-  float total_time_cuda_triv = 0; //para_triv_mult(&A, &B, &res_cuda);
-  float total_time_cuda_kara = para_kara_mult(&A, &B, &res_cuda);
+  float total_cuda_triv_t = para_triv_mult(&A, &B, &res_cuda);
+  float total_cuda_kara_t = para_kara_mult(&A, &B, &res_cuda);
 
   if (CPoly::compare(res, &res_cuda))
     fprintf(stderr, "OK\n");
@@ -54,7 +54,9 @@ int main(int argc, char* argv[]) {
     res_cuda.print_poly();
   }
 
-  //para_kara_mult(&A, &B, NULL);
+ 
+  printf("%d %f %f %f\n", n, total_triv_t, total_cuda_triv_t, total_cuda_kara_t);
+
   delete res;
 
   return 0;
