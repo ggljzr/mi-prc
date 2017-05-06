@@ -39,6 +39,7 @@ int main(int argc, char* argv[]) {
   end_triv_t = clock();
 
   total_triv_t = (double)(end_triv_t - start_triv_t) / (CLOCKS_PER_SEC);
+  total_triv_t *= 1000;
 
   float total_cuda_triv_t = para_triv_mult(&A, &B, &res_cuda);
   float total_cuda_kara_t = para_kara_mult(&A, &B, &res_cuda);
