@@ -40,15 +40,12 @@ __global__ void kernel_kara_st(float *A, float *B, float *D, int n, float *S,
     float at = A[t];
     float bt = B[t];
 
-    //atomicAdd(&(T[i]), (float)(D[s] + D[t]));
-    //atomicAdd(&(S[i]), (float)((as + at) * (bs + bt)));
-
     T_accu += D[s] + D[t];
     S_accu += (as + at) * (bs + bt);
    }
 
-   atomicAdd(&(T[i]), (float)(T_accu));
-   atomicAdd(&(S[i]), (float)(S_accu));
+   T[i] = T_accu;
+   S[i] = S_accu;
 }
 
 __global__ void kernel_kara_res(float *S, float *T, float *D, int n, float *res) {
