@@ -99,15 +99,14 @@ CPoly * CPoly::karatsuba(CPoly * a, CPoly * b)
     double * S = new double[2*n - 1];
     double * T = new double[2*n - 1];
 
-    long long counter = 0;
-    long long counter_flops = 0;
+    long long counter_mult = n;
+    long long counter_add = 0;
 
     for(int i = 1; i < 2*n - 2; i++)
     {
         for(int s = 0; s < i; s++)
         {
             int t = i - s;
-            counter++;
             if(s >= t) break;
             if(t >= n) continue;
 
@@ -118,20 +117,21 @@ CPoly * CPoly::karatsuba(CPoly * a, CPoly * b)
             double bt = b->m_coefs[t];
 
             T[i] += D[s] + D[t];
-            counter_flops++;
+            counter_add += 2;
 
             S[i] += (as + at) * (bs + bt);
+            counter_add += 3;
+            counter_mult += 1;
             
         }
     }
-
-    printf("kara counter %lld\n             (%lld)\n", counter, counter_flops);
 
     res->m_coefs[0] = D[0];
     res->m_coefs[2*n - 2] = D[n - 1];
 
     for(int i = 1; i < 2*n - 2; i++)
     {
+        counter_add++;
         if((i & 0x01)  == 1)
         {
             res->m_coefs[i] = S[i] - T[i];
@@ -141,6 +141,10 @@ CPoly * CPoly::karatsuba(CPoly * a, CPoly * b)
             res->m_coefs[i] = S[i] - T[i] + D[i / 2];
         }
     }
+
+    printf("kara counter add = %lld\n", counter_add);
+    printf("kara counter mult = %lld\n", counter_mult);
+    printf("kara counter sum = %lld\n", counter_add + counter_mult);
 
     delete [] D;
     delete [] S;
